@@ -1,0 +1,112 @@
+{
+  "Uuid": "ee076783-611e-48be-89e9-1cc6d21bf733",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "Home",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "import clr\r\nimport sys\r\nimport os\r\nimport subprocess\r\n\r\nclr.AddReference('RevitServices')\r\nclr.AddReference('RevitAPI')\r\nclr.AddReference('RevitNodes')\r\nclr.AddReference('ProtoGeometry')\r\n\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom Autodesk.Revit.DB import FilteredElementCollector, BuiltInCategory, Element\r\nfrom openpyxl import Workbook\r\n\r\n# Function to convert square feet to square meters\r\ndef convert_to_square_meters(area_in_square_feet):\r\n    return area_in_square_feet * 0.092903\r\n\r\n# Function to convert cubic feet to cubic meters\r\ndef convert_to_cubic_meters(volume_in_cubic_feet):\r\n    return volume_in_cubic_feet * 0.0283168\r\n\r\n# Ensure the document is correctly accessed\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n# Collect all elements in the document\r\ncollector = FilteredElementCollector(doc).WhereElementIsNotElementType()\r\nelements = [elem for elem in collector]\r\n\r\n# Initialize list with headers\r\ndata = [[\"Element ID\", \"Category\", \"Material Name\", \"Volume (m³)\", \"Area (m²)\"]]\r\n\r\n# Extract element IDs and categorize elements\r\nfor elem in elements:\r\n    elem_id = elem.Id.ToString()\r\n    elem_category = elem.Category.Name if elem.Category else \"Unknown\"\r\n    \r\n    # Extract material parameters for each element\r\n    material_set = elem.GetMaterialIds(False)\r\n    for material_id in material_set:\r\n        material = doc.GetElement(material_id)\r\n        material_name = material.Name\r\n        param_volume = elem.LookupParameter('Volume')\r\n        param_area = elem.LookupParameter('Area')\r\n        \r\n        volume = convert_to_cubic_meters(param_volume.AsDouble()) if param_volume else 0\r\n        area = convert_to_square_meters(param_area.AsDouble()) if param_area else 0\r\n        \r\n        data.append([elem_id, elem_category, material_name, volume, area])\r\n\r\n# Create a new Excel workbook and select the active worksheet\r\nwb = Workbook()\r\nws = wb.active\r\nws.title = \"Material Takeoff\"\r\n\r\n# Write the data to the worksheet\r\nfor row in data:\r\n    ws.append(row)\r\n\r\n# Define the file path\r\nfile_path = os.path.join(os.environ[\"USERPROFILE\"], \"Documents\", \"material_takeoff.xlsx\")\r\n\r\n# Save the workbook to the specified file path\r\ntry:\r\n    wb.save(file_path)\r\n    OUT = \"Export Completed\"\r\n    # Open the Excel file\r\n    if sys.platform == \"win32\":\r\n        os.startfile(file_path)\r\n    else:\r\n        subprocess.call(['open', file_path])\r\nexcept PermissionError:\r\n    OUT = f\"PermissionError: Cannot write to the file path: {file_path}. Please choose a different location.\"\r\nexcept Exception as e:\r\n    OUT = f\"Error: {str(e)}\"\r\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "9570969566af4f8ea11d4fa04cd7272a",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "5cb04df9be4a44c8a3600a9e86d06d42",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "14e51bcf366741ad806e4b817d3352f9",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    }
+  ],
+  "Connectors": [],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": null,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.0",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "7.1",
+      "Data": {}
+    }
+  ],
+  "Author": "",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.0.3.7597",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "9570969566af4f8ea11d4fa04cd7272a",
+        "Name": "Python Script",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 830.0209272486389,
+        "Y": -67.57184078412558
+      }
+    ],
+    "Annotations": [],
+    "X": -489.6003461152183,
+    "Y": 418.5828380360039,
+    "Zoom": 0.9266521752443678
+  }
+}
