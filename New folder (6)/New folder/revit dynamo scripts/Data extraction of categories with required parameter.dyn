@@ -1,0 +1,481 @@
+{
+  "Uuid": "d9047db1-6a95-4d1d-9ab2-dc56acd74c41",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "Data extraction of categories with required parameter",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Load the Python Standard and DesignScript Libraries\r\nimport sys\r\nimport clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\ndataEnteringNode = IN\r\n\r\n# Place your code below this line\r\n\r\nimport clr\r\nclr.AddReference('RevitServices')\r\nclr.AddReference('RevitAPI')\r\nclr.AddReference('RevitNodes')\r\n\r\nfrom RevitServices.Persistence import DocumentManager\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n\r\n# Access the current Revit document\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n# Get all categories in the document\r\ncategories = doc.Settings.Categories\r\n\r\n# Prepare a list of category names\r\ncategory_names = [category.Name for category in categories]\r\n\r\n# Output the list of category names\r\nOUT = category_names\r\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "67d250b9c25a4f71bd22c301119831a7",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "65152e38fcc24ecf9043420d35882145",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "efa943466f934a6e849c14d9144b566d",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Load the Python Standard and DesignScript Libraries\r\nimport sys\r\nimport clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\ndataEnteringNode = IN\r\n\r\n# Place your code below this line\r\n\r\nimport clr\r\nclr.AddReference('RevitServices')\r\nclr.AddReference('RevitAPI')\r\nclr.AddReference('RevitNodes')\r\n\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom Autodesk.Revit.DB import FilteredElementCollector, Element\r\n\r\n# Access the current Revit document\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n# Retrieve all elements in the document\r\nall_elements = FilteredElementCollector(doc).WhereElementIsNotElementType().ToElements()\r\n\r\n# Prepare a list of elements with their IDs and names (if available)\r\nelements_with_ids = []\r\nfor element in all_elements:\r\n    try:\r\n        name = element.Name\r\n    except:\r\n        name = \"No Name\"\r\n    elements_with_ids.append((name, element.Id.IntegerValue))\r\n\r\n# Output the list of elements with their IDs\r\nOUT = elements_with_ids\r\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "2e7aacf877b645eca888eea43a832332",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "5b1bf294e4164376b4118cb6016c65c4",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "155f1e13b26c419cba16cba3783e8611",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Load the Python Standard and DesignScript Libraries\r\nimport sys\r\nimport clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\ndataEnteringNode = IN\r\n\r\n# Place your code below this line\r\n\r\nimport clr\r\nclr.AddReference('RevitServices')\r\nclr.AddReference('RevitAPI')\r\nclr.AddReference('RevitNodes')\r\n\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom Autodesk.Revit.DB import Element, ElementId\r\n\r\n# Access the current Revit document\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n# Inputs\r\ncategories_list = IN[0]  # List of categories used in the project\r\nelements_list = IN[1]  # List of elements with their IDs\r\n\r\n# Prepare a list of elements with their IDs, names, and categories\r\nelements_with_details = []\r\n\r\nfor element_info in elements_list:\r\n    element_name, element_id = element_info\r\n    element = doc.GetElement(ElementId(element_id))\r\n    try:\r\n        name = element.Name\r\n    except:\r\n        name = \"No Name\"\r\n    category = element.Category.Name if element.Category else \"No Category\"\r\n    elements_with_details.append((name, element.Id.IntegerValue, category))\r\n\r\n# Output the list of elements with their details\r\nOUT = elements_with_details\r\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "691c21d910004b11a5465da9cac96d95",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "8ab9d7c5d8e14713b41e5f850f0fe2e5",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "495216f3f8a94123bd5cc75363fd856e",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "9f703e3a7cdd4a289d02943b0875b2b5",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Load the Python Standard and DesignScript Libraries\r\nimport sys\r\nimport clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\ndataEnteringNode = IN\r\n\r\n# Place your code below this line\r\n\r\nimport clr\r\nclr.AddReference('RevitServices')\r\nclr.AddReference('RevitAPI')\r\nclr.AddReference('RevitNodes')\r\n\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom Autodesk.Revit.DB import FilteredElementCollector, BuiltInCategory, Element, ElementId\r\n\r\n# Access the current Revit document\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n# Get all categories in the document\r\ncategories = doc.Settings.Categories\r\n\r\n# Dictionary to store parameters by category\r\ncategory_parameters = {}\r\n\r\n# Iterate over all categories\r\nfor category in categories:\r\n    # Skip categories that are not used\r\n    if not category.AllowsBoundParameters:\r\n        continue\r\n    \r\n    # Filter elements by category\r\n    collector = FilteredElementCollector(doc).OfCategoryId(category.Id).WhereElementIsNotElementType()\r\n    \r\n    # Set to store unique parameter names for the category\r\n    parameters = set()\r\n    \r\n    # Iterate over all elements in the category\r\n    for element in collector:\r\n        # Iterate over all parameters of the element\r\n        for param in element.Parameters:\r\n            parameters.add(param.Definition.Name)\r\n    \r\n    # Store the parameters in the dictionary\r\n    if parameters:\r\n        category_parameters[category.Name] = list(parameters)\r\n\r\n# Convert dictionary to a list of tuples for output\r\ncategory_parameters_list = [(cat, params) for cat, params in category_parameters.items()]\r\n\r\n# Output the list of category parameters\r\nOUT = category_parameters_list\r\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "b60608d99f7b4605ac891f86579b896f",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "3316a74259a24869ace0f858029ea0b4",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "0bce9347a00a4f28b810d6e51a6b3900",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Load the Python Standard and DesignScript Libraries\r\nimport sys\r\nimport clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\ndataEnteringNode = IN\r\n\r\n# Place your code below this line\r\nimport clr\r\nclr.AddReference('RevitServices')\r\nclr.AddReference('RevitAPI')\r\nclr.AddReference('RevitNodes')\r\n\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom Autodesk.Revit.DB import Element, ElementId  # Ensure ElementId is imported\r\n\r\n# Access the current Revit document\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n# Inputs\r\nparameters_by_category = IN[0]  # List of tuples (category, list of parameters)\r\nelements_with_details = IN[1]  # List of tuples (element name, element ID, category)\r\n\r\n# Prepare the output list in the desired format\r\noutput_data = []\r\n\r\n# Collect all unique parameter names\r\nunique_parameters = set()\r\nfor cat, params in parameters_by_category:\r\n    unique_parameters.update(params)\r\n\r\nunique_parameters = sorted(unique_parameters)\r\n\r\n# Define the headers based on the unique parameter names\r\nheaders = [\"Category\", \"Element Name\"] + list(unique_parameters)\r\n\r\n# Iterate through the elements with their details\r\nfor element_detail in elements_with_details:\r\n    element_name, element_id, category = element_detail\r\n    \r\n    # Find the corresponding parameters for the category\r\n    for cat, params in parameters_by_category:\r\n        if cat == category:\r\n            # Get the element by its ID\r\n            element = doc.GetElement(ElementId(element_id))\r\n            \r\n            # Prepare a list of parameter values\r\n            param_values = []\r\n            for param_name in unique_parameters:\r\n                param = element.LookupParameter(param_name)\r\n                if param:\r\n                    param_values.append(param.AsValueString() if param.AsValueString() else param.AsString())\r\n                else:\r\n                    param_values.append(\"N/A\")\r\n            \r\n            # Add the data to the output list\r\n            output_data.append((category, element_name, param_values))\r\n            break\r\n\r\n# Prepare the output\r\nOUT = (headers, output_data)\r\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "3f0366edfb1c4e3b91362bea2f7b21a5",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "29969a6e01c84078a8086d0c2eeadece",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f1c471b8f35e4b9b8d63009f094c350f",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "8eab80be8c4945a7b5628999f02ee8ef",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Load the Python Standard and DesignScript Libraries\r\nimport sys\r\nimport clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\ndataEnteringNode = IN\r\n\r\n# Place your code below this line\r\n\r\nimport openpyxl\r\nfrom openpyxl import Workbook\r\n\r\n# Input from the previous node\r\nheaders, data = IN[0]\r\n\r\n# Create a new Excel workbook and select the active worksheet\r\nwb = Workbook()\r\nws = wb.active\r\nws.title = \"Revit Data\"\r\n\r\n# Write headers to the first row\r\nws.append(headers)\r\n\r\n# Write data to the worksheet\r\nfor item in data:\r\n    category, element_name, param_values = item\r\n    row = [category, element_name] + param_values\r\n    ws.append(row)\r\n\r\n# Save the workbook to a file\r\noutput_file_path = r\"C:\\Users\\ntry2\\OneDrive\\Desktop\\data transfer.xlsx\"  # Your specified file path\r\nwb.save(output_file_path)\r\n\r\n# Output the file path for reference\r\nOUT = output_file_path\r\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "84be5c571e4240579efaa54d03ed8666",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "f63dc923b6c94d6fbe355a56e4ee91d8",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "a607be40764f4ed0b3ca563e2c285aff",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Load the Python Standard and DesignScript Libraries\r\nimport sys\r\nimport clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\ndataEnteringNode = IN\r\n\r\n# Place your code below this line\r\n\r\nimport openpyxl\r\nfrom openpyxl import Workbook\r\n\r\n# Input from the previous node\r\ndata = IN[0]\r\n\r\n# Input for file path\r\noutput_file_path = IN[1]\r\n\r\n# Extract headers and data\r\nheaders, data_rows = data[0], data[1]\r\n\r\n# Create a new Excel workbook and select the active worksheet\r\nwb = Workbook()\r\nws = wb.active\r\nws.title = \"Revit Data\"\r\n\r\n# Write headers to the first row\r\nws.append(headers)\r\n\r\n# Write data to the worksheet\r\nfor item in data_rows:\r\n    category, element_name, param_values = item\r\n    row = [category, element_name] + param_values\r\n    ws.append(row)\r\n\r\n# Save the workbook to a file\r\nwb.save(output_file_path)\r\n\r\n# Output the file path for reference\r\nOUT = output_file_path\r\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "11af981a9a68435fa11abcc63a4f2538",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "bfb9a198c357421088ad4e908bde70b8",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5cac1282449b40549e7f1b8dc55f147d",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "aace10207cfa45339a4a1ada49d3bcec",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Filename, CoreNodeModels",
+      "Id": "a887c7350ae342aa9811fd216134ccaf",
+      "NodeType": "ExtensionNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "2b1745ac63c2445fbe6e753a419cfd9e",
+          "Name": "",
+          "Description": "File Path",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows you to select a file on the system and returns its file path",
+      "HintPath": "C:\\Users\\ntry2\\OneDrive\\Desktop\\New folder (6)\\excel file generated\\input\\data transfer for all element.xlsx",
+      "InputValue": "..\\..\\excel file generated\\input\\data transfer for all element.xlsx"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "efa943466f934a6e849c14d9144b566d",
+      "End": "8ab9d7c5d8e14713b41e5f850f0fe2e5",
+      "Id": "bce9e8b5512d4119aa2a5f2ac8847ae2",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "155f1e13b26c419cba16cba3783e8611",
+      "End": "495216f3f8a94123bd5cc75363fd856e",
+      "Id": "8edab85ecf81411fa5e2fbe6ad17c68b",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "9f703e3a7cdd4a289d02943b0875b2b5",
+      "End": "f1c471b8f35e4b9b8d63009f094c350f",
+      "Id": "923d4d51990248d0af2efba9128b17eb",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "0bce9347a00a4f28b810d6e51a6b3900",
+      "End": "29969a6e01c84078a8086d0c2eeadece",
+      "Id": "f5b1106284794ad28d3757bee7974fe6",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "8eab80be8c4945a7b5628999f02ee8ef",
+      "End": "f63dc923b6c94d6fbe355a56e4ee91d8",
+      "Id": "ca1ead21ce504a2fbe4190f46d4056ed",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "8eab80be8c4945a7b5628999f02ee8ef",
+      "End": "bfb9a198c357421088ad4e908bde70b8",
+      "Id": "c227d1edc4fb4221958a23e4a8c51462",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "2b1745ac63c2445fbe6e753a419cfd9e",
+      "End": "5cac1282449b40549e7f1b8dc55f147d",
+      "Id": "706f32e771f34dee920d70c627544af1",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [
+    {
+      "Name": "data transfer.xlsx",
+      "ReferenceType": "External",
+      "Nodes": [
+        "84be5c571e4240579efaa54d03ed8666"
+      ]
+    },
+    {
+      "Name": "data transfer for all element.xlsx",
+      "ReferenceType": "External",
+      "Nodes": [
+        "11af981a9a68435fa11abcc63a4f2538",
+        "a887c7350ae342aa9811fd216134ccaf"
+      ]
+    }
+  ],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.0",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "7.1",
+      "Data": {}
+    }
+  ],
+  "Author": "",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.0.3.7597",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "67d250b9c25a4f71bd22c301119831a7",
+        "Name": "Python Script",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 5.524039641007221,
+        "Y": 84.03957040867658
+      },
+      {
+        "Id": "2e7aacf877b645eca888eea43a832332",
+        "Name": "Python Script",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 5.2423378663395965,
+        "Y": 586.4893846466107
+      },
+      {
+        "Id": "691c21d910004b11a5465da9cac96d95",
+        "Name": "Python Script",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 316.14637443778224,
+        "Y": 198.62178843421555
+      },
+      {
+        "Id": "b60608d99f7b4605ac891f86579b896f",
+        "Name": "Python Script",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 605.5667989028062,
+        "Y": 684.3659853940455
+      },
+      {
+        "Id": "3f0366edfb1c4e3b91362bea2f7b21a5",
+        "Name": "Python Script",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 989.3414659156686,
+        "Y": 279.6746357088807
+      },
+      {
+        "Id": "84be5c571e4240579efaa54d03ed8666",
+        "Name": "Python Script",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1670.2880316870546,
+        "Y": 404.3646056723743
+      },
+      {
+        "Id": "11af981a9a68435fa11abcc63a4f2538",
+        "Name": "Python Script",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1483.481400579937,
+        "Y": 30.28924837477456
+      },
+      {
+        "Id": "a887c7350ae342aa9811fd216134ccaf",
+        "Name": "File Path",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1010.6673743097449,
+        "Y": -0.1689268816452909
+      }
+    ],
+    "Annotations": [],
+    "X": -103.96276899623007,
+    "Y": 300.31257252219405,
+    "Zoom": 0.460627934015996
+  }
+}

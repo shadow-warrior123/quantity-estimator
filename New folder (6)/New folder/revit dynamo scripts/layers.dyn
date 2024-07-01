@@ -1,0 +1,112 @@
+{
+  "Uuid": "75f515e5-bf9e-44f8-8617-279ab6144b6c",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "layers",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Load the Python Standard and DesignScript Libraries\r\nimport sys\r\nimport clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\ndataEnteringNode = IN\r\n\r\n# Place your code below this line\r\n\r\nimport clr\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\n\r\nimport openpyxl\r\nfrom openpyxl import Workbook\r\nimport os\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\ndef get_elements_with_compound_structure(doc):\r\n    categories = [\r\n        BuiltInCategory.OST_Walls,\r\n        BuiltInCategory.OST_Floors,\r\n        BuiltInCategory.OST_Roofs,\r\n        BuiltInCategory.OST_Ceilings\r\n    ]\r\n    elements = []\r\n    for category in categories:\r\n        collector = FilteredElementCollector(doc).OfCategory(category).WhereElementIsNotElementType()\r\n        elements.extend(collector.ToElements())\r\n    return elements\r\n\r\n# Prepare Excel file\r\nexcel_path = r\"C:\\Users\\ntry2\\OneDrive\\Desktop\\New folder (6)\\excel file generated\\input\\element with layer quantity takeoff.xlsx\"\r\nwb = Workbook()\r\nws = wb.active\r\nws.title = \"Layer Properties\"\r\nheaders = [\"Element ID\", \"Category\", \"Family\", \"Type\", \"Name\", \"Function\", \"Material\", \"Thickness\", \"Wraps\", \"Variable\"]\r\nws.append(headers)\r\n\r\n# Get all elements with compound structure\r\nelements = get_elements_with_compound_structure(doc)\r\n\r\n# Process each element\r\nfor element in elements:\r\n    element_type = doc.GetElement(element.GetTypeId())\r\n    \r\n    # Get element properties\r\n    element_id = element.Id.IntegerValue\r\n    category = element.Category.Name\r\n    family = element_type.FamilyName\r\n    type_name = element_type.LookupParameter(\"Type Name\").AsString()\r\n    name = element.Name\r\n    \r\n    # Get compound structure\r\n    if hasattr(element_type, \"GetCompoundStructure\"):\r\n        compound_structure = element_type.GetCompoundStructure()\r\n        if compound_structure:\r\n            layers = compound_structure.GetLayers()\r\n            \r\n            for layer in layers:\r\n                function = str(layer.Function)  # Convert enum to string\r\n                material_id = layer.MaterialId\r\n                material = doc.GetElement(material_id).Name if material_id != ElementId.InvalidElementId else \"\"\r\n                thickness = str(layer.Width)  # Convert to string explicitly\r\n                wraps = \"Yes\" if hasattr(layer, \"DeckEmbedded\") and (layer.DeckEmbedded or layer.DeckProfiled) else \"No\"\r\n                variable = \"Yes\" if hasattr(layer, \"IsVariable\") and layer.IsVariable else \"No\"\r\n                \r\n                # Write data to Excel\r\n                ws.append([element_id, category, family, type_name, name, function, material, thickness, wraps, variable])\r\n\r\n# Save the Excel file, overwriting any existing file\r\nwb.save(excel_path)\r\n\r\n# Output success message\r\nOUT = \"Layer details for all applicable elements exported to \" + excel_path\r\n\r\n\r\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "fabaa321a297420d993a1364f5adf463",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "7ac6b355f1ca41a38be3f1128b201dc4",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "73ec500a3cc243a8ba41e9e02cb94047",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    }
+  ],
+  "Connectors": [],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.0",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "7.1",
+      "Data": {}
+    }
+  ],
+  "Author": "",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.0.3.7597",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "fabaa321a297420d993a1364f5adf463",
+        "Name": "Python Script",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 289.99999999999994,
+        "Y": 152.8
+      }
+    ],
+    "Annotations": [],
+    "X": -167.3982950000003,
+    "Y": 169.0126899999999,
+    "Zoom": 1.33823125
+  }
+}
