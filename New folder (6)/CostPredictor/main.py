@@ -3,9 +3,9 @@ import customtkinter
 from images import setup_images
 from navigation import create_navigation_frame
 from frames.home_frame import create_home_frame
-from frames.sort_frame import create_sort_frame
 from frames.reformat_frame import create_reformat_frame
 from frames.split_data_frame import create_split_data_frame
+from frames.unit_prices_frame import create_unit_prices_frame
 from helpers import toggle_theme, select_frame
 
 if __name__ == "__main__":
@@ -22,20 +22,20 @@ if __name__ == "__main__":
 
     frames = {
         "home": create_home_frame(root),
-        "sort": create_sort_frame(root),
+        "reformat": create_reformat_frame(root),
         "split_data": create_split_data_frame(root),
-        "reformat": create_reformat_frame(root)
+        "unit_prices": create_unit_prices_frame(root)
     }
 
-    home_button, sort_button, split_data_button, reformat_button, theme_toggle_switch = create_navigation_frame(
+    home_button, reformat_button, split_data_button, unit_prices_button, theme_toggle_switch = create_navigation_frame(
         root, logo_image, lambda: toggle_theme(frames, theme_toggle_switch), lambda name: select_frame(name, frames, buttons)
     )
 
     buttons = {
         "home": home_button,
-        "sort": sort_button,
+        "reformat": reformat_button,
         "split_data": split_data_button,
-        "reformat": reformat_button
+        "unit_prices": unit_prices_button
     }
 
     select_frame("home", frames, buttons)
