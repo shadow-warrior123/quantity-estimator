@@ -1,7 +1,8 @@
 import os
 from tkinter import filedialog, messagebox
 import customtkinter
-from helpers import get_current_fg_color  # Import the get_current_fg_color function
+from helpers import get_current_fg_color
+import pandas as pd
 
 def create_sort_frame(root):
     frame = customtkinter.CTkFrame(root, corner_radius=0, fg_color=get_current_fg_color())
@@ -70,3 +71,26 @@ def create_sort_frame(root):
     process_button.grid(row=7, column=0, columnspan=2, padx=20, pady=20, sticky="sew")
 
     return frame
+
+def automate_data_processing(raw_data_path, sample_data_path, output_path):
+    """
+    Example implementation of data processing.
+    This function should be customized based on the actual data processing logic.
+    """
+    # Load the raw data and sample data
+    raw_data = pd.read_excel(raw_data_path)
+    sample_data = pd.read_excel(sample_data_path)
+
+    # Identify common columns for merging
+    common_columns = set(raw_data.columns).intersection(set(sample_data.columns))
+    if not common_columns:
+        raise ValueError("No common columns found for merging data.")
+    common_column = list(common_columns)[0]  # Assuming at least one common column
+
+    # Perform some data processing (example: merge datasets)
+    processed_data = pd.merge(raw_data, sample_data, on=common_column, how='inner')
+
+    # Save the processed data to the specified output path
+    processed_data.to_excel(output_path, index=False)
+
+    print(f"Data processed and saved to: {output_path}")
