@@ -13,13 +13,15 @@ def create_navigation_frame(root, logo_image, toggle_theme, select_frame):
     reformat_button = create_nav_button(navigation_frame, "Reformat", lambda: select_frame("reformat"))
     split_data_button = create_nav_button(navigation_frame, "Split Data", lambda: select_frame("split_data"))
     unit_prices_button = create_nav_button(navigation_frame, "Unit Prices", lambda: select_frame("unit_prices"))
+    concrete_mix_button = create_nav_button(navigation_frame, "Concrete Mix", lambda: select_frame("concrete_mix"))
     excel_processing_button = create_nav_button(navigation_frame, "Excel Processing", lambda: select_frame("excel_processing"))
 
     home_button.grid(row=1, column=0, sticky="ew", padx=20, pady=5)
     reformat_button.grid(row=2, column=0, sticky="ew", padx=20, pady=5)
     split_data_button.grid(row=3, column=0, sticky="ew", padx=20, pady=5)
     unit_prices_button.grid(row=4, column=0, sticky="ew", padx=20, pady=5)
-    excel_processing_button.grid(row=5, column=0, sticky="ew", padx=20, pady=5)
+    concrete_mix_button.grid(row=5, column=0, sticky="ew", padx=20, pady=5)
+    excel_processing_button.grid(row=6, column=0, sticky="ew", padx=20, pady=5)
 
     navigation_frame.grid_rowconfigure(97, weight=1)
 
@@ -32,7 +34,7 @@ def create_navigation_frame(root, logo_image, toggle_theme, select_frame):
     theme_toggle_switch = customtkinter.CTkSwitch(navigation_frame, text="Dark Mode", command=toggle_theme)
     theme_toggle_switch.grid(row=98, column=0, padx=20, pady=10, sticky="sew")
 
-    return home_button, reformat_button, split_data_button, unit_prices_button, excel_processing_button, theme_toggle_switch
+    return home_button, reformat_button, split_data_button, unit_prices_button, concrete_mix_button, excel_processing_button, theme_toggle_switch
 
 def create_nav_button(parent, text, command):
     button = customtkinter.CTkButton(parent, corner_radius=6, height=40, border_spacing=10, text=text,
