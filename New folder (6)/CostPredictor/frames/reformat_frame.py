@@ -1,7 +1,6 @@
 import os
-import pandas as pd
-from tkinter import filedialog, messagebox
 import customtkinter
+from tkinter import filedialog, messagebox
 from helpers import get_current_fg_color
 from reformat import reformat_and_split_excel, level_params
 
