@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 from tkinter import filedialog, messagebox
 import customtkinter
 from helpers import get_current_fg_color
@@ -7,8 +8,7 @@ from reformat import reformat_and_split_excel, level_params
 def create_reformat_frame(root):
     frame = customtkinter.CTkFrame(root, corner_radius=0, fg_color=get_current_fg_color())
     frame.grid_columnconfigure(0, weight=1)
-    label = customtkinter.CTkLabel(frame, text="Reformat", text_color=("black", "white"))
-    label.grid(row=0, column=0, padx=20, pady=10)
+    frame.grid_rowconfigure(0)
 
     input_file_var = customtkinter.StringVar()
     output_folder_var = customtkinter.StringVar()
